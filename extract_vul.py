@@ -1,29 +1,21 @@
 import pickle
 from PIL import Image
 import matplotlib.pyplot as plt
-import sys
 import os
-
-sys.path.insert(0, '../')
 import vulcan_cfg
 
-plot_dir = '../' + vulcan_cfg.plot_dir
+
+plot_dir = './plots/'
 
 
 class Vul:
     def __init__(self, system_arg):
-        vul_data = system_arg[1]  # Set the 1st input argument as the filename of vulcan output
+        vul_data = system_arg[0]  # Set the 1st input as the filename of vulcan output
         with open(vul_data, 'rb') as handle:
             self.data = pickle.load(handle)            
-        if len(system_arg) > 2:
-            self.plot_name = system_arg[2]  # 2nd input argument: output filename
-            
-        self.species_req = None
-        if len(system_arg) > 3:
-            species_req = system_arg[3].split(',') # Splits user input species into separate strings by ','
-            self.species_req = tuple(species_req)  # 3rd OPTIONAL input argument: tuple of species names     
-        if len(system_arg) > 4:
-            self.reactions = system_arg[4].split(',') # 4th OPTIONAL input argument: list of reactions
+        self.plot_name = system_arg[1]  # 2nd input: output filename
+        self.species_req = system_arg[2]  # 3rd input: species names
+        self.reactions = system_arg[3]  # 4th input: list of reactions
 
     def param(self, category, var):
         param = self.data[category][var]

@@ -146,7 +146,7 @@ class App:
 
     def search_species(self, event=None):
         network_path = self.netEntry.get()
-        species = self.speciesEntry.get().upper()
+        species = self.speciesEntry.get().upper().strip()
         self.speciesEntry.delete("0", END)
         self.speciesEntry.insert(0, species)
 

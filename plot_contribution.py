@@ -4,12 +4,10 @@ import numpy as np
 from heapq import nlargest, nsmallest
 from search_species import assign_label
 import matplotlib.pyplot as plt
-
-sys.path.insert(0, '../')  # including the upper level of directory for the path of modules
 import vulcan_cfg
 
-vul_obj = extract_vul.Vul(sys.argv)
 
+vul_obj = extract_vul.Vul(sys.argv)
 species = vul_obj.param('variable', 'species')
 ymix = vul_obj.param('variable', 'ymix')
 pco = vul_obj.param('atm', 'pco')
@@ -24,6 +22,7 @@ i = species.index(species_req)
 indx = [] 
 for j in range(ni): 
     indx.append(np.arange(j,j+ni*nz,ni)) 
+
 
 def find_sig():
     matr_order = {}

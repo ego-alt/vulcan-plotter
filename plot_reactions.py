@@ -26,7 +26,6 @@ class Plotter:
         self.reactions = self.vul_obj.reactions  # Reactions
 
     def plotting(self):
-        # var total TRUE: plots overall reaction rate, FALSE: plots individual reactions
         main_species = assign_label(self.species_req)
         x_0, y = self.ymix[:, self.species.index(self.species_req)], self.zco[1:] / 1.e5
         fig, ax = plt.subplots()

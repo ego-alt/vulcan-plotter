@@ -16,18 +16,19 @@ def find_species(file1, species):  # Outputs all chemical network reactions invo
                 r = re.compile('^([0-9\s]+)\[(.*?)\->(.*?)\]')
                 result = re.findall(r, line)[0]
                 num1 = result[0].strip()
-                num2 = str(int(num1) + 1)
+                if num1:
+                    num2 = str(int(num1) + 1)
 
-                reaction = num1 + ' ' + result[1].strip() + ' -> ' + result[2].strip()
-                rev_reaction = num2 + ' ' + result[2].strip() + ' -> ' + result[1].strip()
-                if species in result[1]:
-                    sink.append(reaction)
-                    source.append(rev_reaction)
-                elif species in result[2]:
-                    source.append(reaction)
-                    sink.append(rev_reaction)
-                else:
-                    pass
+                    reaction = num1 + ' ' + result[1].strip() + ' -> ' + result[2].strip()
+                    rev_reaction = num2 + ' ' + result[2].strip() + ' -> ' + result[1].strip()
+                    if species in result[1]:
+                        sink.append(reaction)
+                        source.append(rev_reaction)
+                    elif species in result[2]:
+                        source.append(reaction)
+                        sink.append(rev_reaction)
+                    else:
+                        pass
 
         # print(f'The total number of network reactions involving {species} is {count}')
         # print(*reaction_num, sep=',')

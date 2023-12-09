@@ -4,7 +4,7 @@ Plots are saved in the folder 'plot/' within this repository.
 '''
 import numpy as np
 import extract_vul
-from search_species import assign_label
+from search_species import assign_label, choose_significant_reactions
 from plot_cfg import *
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -42,26 +42,29 @@ class Plotter:
 
         ax2 = ax.twiny()
         ax2.set_xlabel('Reaction rate (molec cm$^{-3}$ s$^{-1}$)')
-        k_holder = []
+        reaction_rates = []
         for r in self.reactions:
             n, reaction = r.split(maxsplit=1)
             n = int(n)
-            species_k = self.k[n]
+            reaction_k = self.k[n]
             reactants = reaction.split(' -> ')[0].split(' + ')
             for reactant in reactants:
                 if reactant == 'M':
                     x_1 = self.m
                 else:
                     x_1 = self.yabun[:, self.species.index(reactant)]
-                species_k = np.multiply(species_k, x_1)
-            k_holder.append(species_k)
-            line = ax2.plot(species_k, y, lw=1.0, label=r, linestyle='dashed')
+                reaction_k = np.multiply(reaction_k, x_1)
+            reaction_rates.append(reaction_k)
+            line = ax2.plot(reaction_k, y, lw=1.0, label=r, linestyle='dashed')
 
         ax2.legend(frameon=0, prop={'size': 10}, loc='lower left')
         ax2.set_xlim([reaction_rate_xmin, reaction_rate_xmax])
         if set_xscale_log: ax2.set_xscale('log')
+        # print(choose_significant_reactions(reaction_rates, self.reactions))
+        plt.tight_layout()
+        self.vul_obj.save(plt)
 
-        """k_holder = []
+    """k_holder = []
         if total:
             for n in self.reactions:
                 find_k = self.k[n]
@@ -101,11 +104,6 @@ class Plotter:
             plt.gca().set_xscale('log')
             plt.gca().set_xlim([1e-14, 1e6])
 
-        print(find_sig(k_holder, self.reaction_num))"""
-
-        plt.tight_layout()
-        self.vul_obj.save(plt)
-
     def photolysis(self):
         y = self.zco[1:] / 1.e5
         fig, ax = plt.subplots()
@@ -140,4 +138,4 @@ class Plotter:
         plt.gca().set_ylim([self.zmco[1] / 1.e5, self.zmco[-1] / 1.e5])
         # plt.gca().set_ylim([self.zmco[1] / 1.e5, 120])
         plt.tight_layout()
-        self.vul_obj.save(plt)
+        self.vul_obj.save(plt)"""

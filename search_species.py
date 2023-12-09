@@ -10,27 +10,30 @@ def find_species(file1, species):  # Outputs all chemical network reactions invo
 
         lines = fp.readlines()
         for line in lines:
+            line = line.replace('\t', ' ')
             if not line.startswith('#') and species in line:
                 # Ignores comments and distinguishes between repetitive species, e.g. 'CH2NH' in CH2NH2
-                count += 1
                 r = re.compile('^([0-9\s]+)\[(.*?)\->(.*?)\]')
-                result = re.findall(r, line)[0]
-                num1 = result[0].strip()
-                if num1:
-                    num2 = str(int(num1) + 1)
+                result = re.findall(r, line)
+                if result:
+                    result = result[0]
+                    num1 = result[0].strip()
+                    if num1:
+                        num2 = str(int(num1) + 1)
+                        reaction = num1 + ' ' + result[1].strip() + ' -> ' + result[2].strip()
+                        rev_reaction = num2 + ' ' + result[2].strip() + ' -> ' + result[1].strip()
+                        if species in result[1]:
+                            sink.append(reaction)
+                            source.append(rev_reaction)
+                            count += 1
+                        elif species in result[2]:
+                            source.append(reaction)
+                            sink.append(rev_reaction)
+                            count += 1
+                        else:
+                            pass
 
-                    reaction = num1 + ' ' + result[1].strip() + ' -> ' + result[2].strip()
-                    rev_reaction = num2 + ' ' + result[2].strip() + ' -> ' + result[1].strip()
-                    if species in result[1]:
-                        sink.append(reaction)
-                        source.append(rev_reaction)
-                    elif species in result[2]:
-                        source.append(reaction)
-                        sink.append(rev_reaction)
-                    else:
-                        pass
-
-        # print(f'The total number of network reactions involving {species} is {count}')
+        print(f'The total number of network reactions involving {species} is {count * 2}.')
         # print(*reaction_num, sep=',')
         # print(f'Sources:')
         # print(*source, sep='\n')
@@ -47,30 +50,29 @@ def find_species(file1, species):  # Outputs all chemical network reactions invo
 """
 
 
-def find_max(k_holder, reaction_num):
-    largest_reaction = []
-    for i in range(k_holder[0].size):
-        i_element = [k[i] for k in k_holder]
-        largest_reaction.append(reaction_num[i_element.index(max(i_element))])
-    return largest_reaction
+def find_max(rates):
+    peak_reaction_rates = []
+    for height_layer in range(rates[0].size):
+        peak_rate = [k[height_layer] for k in rates]
+        peak_reaction_rates.append(max(peak_rate))
+    return peak_reaction_rates
 
 
-def find_sig(k_holder, reaction_num):
-    largest_reaction = find_max(k_holder, reaction_num)
-    summed_k = [sum(i) for i in k_holder]
+def choose_significant_reactions(rates, reactions):
+    summed_rate = [sum(layer_rate) for layer_rate in rates]
+    overall_threshold = 0.6 * max(summed_rate)  # 60% of largest summed reaction rate (across all altitudes)
+    significant_overall = [reactions[ind] for ind, i in enumerate(summed_rate) if i >= overall_threshold]
+    return significant_overall
 
-    overall_threshold = 0.6 * max(summed_k)  # 60% of largest summed reaction rate (across all altitudes)
-    signif_reaction = set([reaction_num[ind] for ind, i in enumerate(summed_k) if i >= overall_threshold])
 
+"""def find_sig(reaction_rates, reaction_num):
+    fastest_reaction = find_max(reaction_rates, reaction_num)
     peak_threshold = 0.6  # 80% of maximum reaction rate in a single altitude layer
-    top_peak = [k_holder[reaction_num.index(i)][alt] * peak_threshold for alt, i in enumerate(largest_reaction)]
+    top_peak = [reaction_rates[reaction_num.index(i)][alt] * peak_threshold for alt, i in enumerate(fastest_reaction)]
+    
     # Peak threshold applied to highest reaction rate in each layer 
-    signif_peak = set([reaction_num[ind] for ind, j in enumerate(k_holder) if any(j >= top_peak)])
-
-    largest_reaction = set(largest_reaction)
-    signif_reaction = largest_reaction.union(signif_reaction, signif_peak)
-    print(largest_reaction)
-    return signif_reaction
+    signif_peak = set([reaction_num[ind] for ind, j in enumerate(reaction_rates) if any(j >= top_peak)])
+    return signif_peak"""
 
 
 def read_network(file1):  # Stores all chemical network reactions in a list for compare_txt

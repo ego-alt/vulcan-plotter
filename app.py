@@ -195,12 +195,9 @@ class App:
 
     def browse_files(self, widget):
         if widget == self.netEntry:
-            filename = filedialog.askopenfilename(filetypes=(("txt files", "*.txt"), ("All files", "*.*")),
-                                                  initialdir="../thermo")
+            filename = filedialog.askopenfilename(filetypes=(("txt files", "*.txt"), ("All files", "*.*")))
         elif widget == self.fileEntry:
-            filename = filedialog.askopenfilename(filetypes=(("vul files", "*.vul"), ("All files", "*.*")),
-                                                  initialdir="../output")
-        filename = re.sub(r".*?VULCAN", "..", filename)
+            filename = filedialog.askopenfilename(filetypes=(("vul files", "*.vul"), ("All files", "*.*")))
         widget.delete(0, END)
         widget.insert(0, filename)
 
